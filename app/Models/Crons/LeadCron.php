@@ -56,19 +56,34 @@ class LeadCron extends Model
             $leads           = self::getLeads();
 
             foreach ($leads as $lead) {
-                Log::info(__METHOD__, ['webhook parsen ' . $lead->data]); //DELETE
-
                 $fieldId = self::getFieldIdByName(
                     self::getStageNameById(
-                        (int) json_decode($lead->data)->status_id
+                        (int) json_decode($lead->data)->status_id,
+                        (int) json_decode($lead->data)->pipeline_id
                     )
                 );
 
                 if ($fieldId) {
                     Log::info(__METHOD__, ['geben datum im feld-stufe ein']); //DELETE
+
+                    self::$amoAPIHub->updateLead([
+                        [
+                            "id"                   => (int) $lead->lead_id,
+                            'custom_fields_values' => [
+                                [
+                                    'field_id' => $fieldId,
+                                    'values'   => [
+                                        [
+                                            'value' => time(),
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ]);
                 }
 
-                // $lead->delete();
+                $lead->delete();
             }
         }
     }
@@ -82,16 +97,46 @@ class LeadCron extends Model
             ->take(self::PARSE_COUNT)
             ->get();
     }
-    public static function getStageNameById(int $id): string
+    public static function getStageNameById(int $stageId, int $pipelineId): string
     {
-        Log::info(__METHOD__, ['status_id: ' . $id]); //DELETE
+        $stageName = '';
+        $stage     = self::$amoAPIHub->getLeadStageById($stageId, $pipelineId);
 
-        return '';
+        if ($stage) {
+            $stageName = str_replace(' ', '', trim(mb_strtolower('Этап 7')));
+        }
+
+        return $stageName;
     }
-    public static function getFieldIdByName(string $name): ?int
+    public static function getFieldIdByName(string $str): ?int
     {
-        Log::info(__METHOD__); //DELETE
+        if (!$str) {
+            return null;
+        }
 
-        return null;
+        $fieldsNode = self::$amoAPIHub->list('customFields');
+        $fields     = [];
+        $fieldId    = null;
+
+        foreach ($fieldsNode as $fieldNode) {
+            $customFields = $fieldNode['_embedded']['custom_fields'];
+
+            foreach ($customFields as $customField) {
+                $fields[] = [
+                    'id'   => $customField['id'],
+                    'name' => str_replace(' ', '', trim(mb_strtolower($customField['name']))),
+                ];
+            }
+        }
+
+        foreach ($fields as $field) {
+            if ($field['name'] === $str) {
+                $fieldId = (int) $field['id'];
+
+                Log::info(__METHOD__, [$fieldId]); //DELETE
+            }
+        }
+
+        return $fieldId; //DELETE
     }
 }

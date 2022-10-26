@@ -24,7 +24,7 @@ class amoAPIHub
 
         $this->client = new amoClient();
 
-        $this->pageItemLimit = 250;
+        $this->pageItemLimit = 20;
 
         $this->amoData['client_id']     = $amoData['client_id'] ?? null;
         $this->amoData['client_secret'] = $amoData['client_secret'] ?? null;
@@ -82,6 +82,10 @@ class amoAPIHub
 
             case 'users':
                 $api = '/api/v4/users';
+                break;
+
+            case 'customFields':
+                $api = '/api/v4/leads/custom_fields';
                 break;
 
             default:
@@ -166,6 +170,25 @@ class amoAPIHub
             'data'    => [
                 'destination' => $webhook,
             ],
+        ]);
+
+        if ($response['code'] < 200 || $response['code'] >= 204) {
+            return null;
+        }
+
+        return $response['body'];
+    }
+
+    public function getLeadStageById(int $stageId, int $pipelineId): ?array
+    {
+        $url      = 'https://' . $this->amoData['subdomain'] . '.amocrm.ru/api/v4/leads/pipelines/' . $pipelineId . '/statuses/' . $stageId;
+        $response = $this->client->sendRequest([
+            'url'     => $url,
+            'headers' => [
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer ' . $this->amoData['access_token'],
+            ],
+            'method'  => 'GET',
         ]);
 
         if ($response['code'] < 200 || $response['code'] >= 204) {
