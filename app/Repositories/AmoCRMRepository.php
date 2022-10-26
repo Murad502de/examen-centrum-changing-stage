@@ -13,7 +13,7 @@ class AmoCRMRepository
 
     private static $amoAPIHub;
 
-    public static function addWebhookAfterAuth()
+    public static function addWebhookAfterAuth(string $webhookUrl)
     {
         Log::info(__METHOD__); //DELETE
 
@@ -25,28 +25,24 @@ class AmoCRMRepository
             if ($webhooks) {
                 $webhook = self::findWebhookByUrl(
                     $webhooks['_embedded']['webhooks'],
-                    config('services.amoCRM.webhook_lead_change_stage_url')
+                    $webhookUrl
                 );
 
                 if (!$webhook) {
                     Log::info(__METHOD__, ['Must add']); //DELETE
 
-                    self::$amoAPIHub->addWebhook(
-                        config('services.amoCRM.webhook_lead_change_stage_url')
-                    );
+                    self::$amoAPIHub->addWebhook($webhookUrl);
                 }
             }
         }
     }
-    public static function deleteWebhookAfterSignout() {
+    public static function deleteWebhookAfterSignout(string $webhookUrl) {
         Log::info(__METHOD__); //DELETE
 
         if (self::amoTokenExpirationControl()) {
             self::$amoAPIHub = new amoAPIHub(amoCRM::getAuthData());
 
-            self::$amoAPIHub->deleteWebhook(
-                config('services.amoCRM.webhook_lead_change_stage_url')
-            );
+            self::$amoAPIHub->deleteWebhook($webhookUrl);
         }
     }
 

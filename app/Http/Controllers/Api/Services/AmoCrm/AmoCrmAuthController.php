@@ -33,13 +33,15 @@ class AmoCrmAuthController extends Controller
         ];
 
         amoCRM::auth($accountData);
-        AmoCRMRepository::addWebhookAfterAuth();
+        AmoCRMRepository::addWebhookAfterAuth(config('services.amoCRM.webhook_lead_change_stage_url'));
+        AmoCRMRepository::addWebhookAfterAuth(config('services.amoCRM.webhook_lead_create_url'));
 
         return response(['OK'], 200);
     }
     public function signout()
     {
-        AmoCRMRepository::deleteWebhookAfterSignout();
+        AmoCRMRepository::deleteWebhookAfterSignout(config('services.amoCRM.webhook_lead_change_stage_url'));
+        AmoCRMRepository::deleteWebhookAfterSignout(config('services.amoCRM.webhook_lead_create_url'));
         amoCRM::signout();
 
         return response(['OK'], 200);
