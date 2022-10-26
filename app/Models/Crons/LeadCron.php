@@ -103,7 +103,7 @@ class LeadCron extends Model
         $stage     = self::$amoAPIHub->getLeadStageById($stageId, $pipelineId);
 
         if ($stage) {
-            $stageName = str_replace(' ', '', trim(mb_strtolower('Этап 7')));
+            $stageName = str_replace(' ', '', trim(mb_strtolower($stage['name'])));
         }
 
         return $stageName;
