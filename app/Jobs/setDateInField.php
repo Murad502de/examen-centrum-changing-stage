@@ -3,27 +3,32 @@
 namespace App\Jobs;
 
 use App\Jobs\Middleware\AmoTokenExpirationControl;
-use App\Models\Lead;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
-class CalculatePriceWithDiscount implements ShouldQueue
+class setDateInField implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    private $lead;
+    private $leadId;
+    private $fieldId;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Lead $lead)
+    public function __construct(int $leadId, int $fieldId)
     {
-        $this->lead = $lead;
+        $this->leadId  = $leadId;
+        $this->fieldId = $fieldId;
     }
 
     /**
@@ -33,7 +38,8 @@ class CalculatePriceWithDiscount implements ShouldQueue
      */
     public function handle()
     {
-        $this->lead->calculateDiscountPrice();
+        Log::info(__METHOD__, ['leadId: ' . $this->leadId]); //DELETE
+        Log::info(__METHOD__, ['fieldId: ' . $this->fieldId]); //DELETE
     }
 
     /**
