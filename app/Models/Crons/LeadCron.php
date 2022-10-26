@@ -133,7 +133,9 @@ class LeadCron extends Model
             if ($field['name'] === $str) {
                 $fieldId = (int) $field['id'];
 
-                Log::info(__METHOD__, [$fieldId]); //DELETE
+                Log::info(__METHOD__, ['id: ' . $fieldId]); //DELETE
+                Log::info(__METHOD__, ['name: ' . $field['name']]); //DELETE
+                Log::info(__METHOD__, ['str: ' . $str]); //DELETE
             }
         }
 
