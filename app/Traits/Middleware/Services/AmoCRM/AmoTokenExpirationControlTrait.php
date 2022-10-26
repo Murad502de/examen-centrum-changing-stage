@@ -1,28 +1,21 @@
 <?php
 
-namespace App\Jobs\Middleware;
+namespace App\Traits\Middleware\Services\AmoCRM;
 
 use App\Models\Services\amoCRM;
 use App\Services\amoAPI\amoHttp\amoClient;
 use Illuminate\Support\Facades\Log;
 
-class AmoTokenExpirationControl
+trait AmoTokenExpirationControlTrait
 {
-    /**
-     * Process the job in the queue.
-     *
-     * @param  mixed  $job
-     * @param  callable  $next
-     * @return mixed
-     */
-    public function handle($job, $next)
+    public static function amoTokenExpirationControl(): bool
     {
         $client   = new amoClient();
         $authData = amoCRM::getAuthData();
 
         if ($authData) {
             if (time() >= (int) $authData['when_expires']) {
-                Log::info(__METHOD__, ['access token expired']); //DELETE
+                Log::info(__METHOD__, ['AmoCRM access token expired']); //DELETE
 
                 $response = $client->accessTokenUpdate($authData);
 
@@ -40,23 +33,23 @@ class AmoTokenExpirationControl
 
                     amoCRM::auth($accountData);
 
-                    Log::info(__METHOD__, ['access token updated']); //DELETE
+                    Log::info(__METHOD__, ['AmoCRM access token updated']); //DELETE
 
-                    $next($job);
+                    return true;
                 } else {
-                    Log::info(__METHOD__, ['Login error with code: ' . $response['code']]); //DELETE
+                    Log::info(__METHOD__, ['AmoCRM auth error with code: ' . $response['code']]); //DELETE
 
-                    // $job->release(10);
+                    return false;
                 }
             } else {
-                Log::info(__METHOD__, ['access token ist not expired']); //DELETE
+                Log::info(__METHOD__, ['AmoCRM access token ist not expired']); //DELETE
 
-                $next($job);
+                return true;
             }
         } else {
-            Log::info(__METHOD__, ['Login data not found']); //DELETE
+            Log::info(__METHOD__, ['AmoCRM auth credentials not found']); //DELETE
 
-            // $job->release(10);
+            return false;
         }
     }
 }

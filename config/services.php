@@ -31,10 +31,11 @@ return [
     ],
 
     'amoCRM'   => [
-        'client_secret'       => env('AMOCRM_CLIENT_SECRET', null),
-        'redirect_uri'        => env('AMOCRM_REDIRECT_URI', null),
-        'subdomain'           => env('AMOCRM_SUBDOMAIN', null),
-        'successful_stage_id' => env('AMOCRM_SUCCESSFUL_STAGE_ID', null),
-        'loss_stage_id'       => env('AMOCRM_LOSS_STAGE_ID', null),
+        'client_secret'                 => env('AMOCRM_CLIENT_SECRET', null),
+        'redirect_uri'                  => env('AMOCRM_REDIRECT_URI', null),
+        'subdomain'                     => env('AMOCRM_SUBDOMAIN', null),
+        'successful_stage_id'           => env('AMOCRM_SUCCESSFUL_STAGE_ID', null),
+        'loss_stage_id'                 => env('AMOCRM_LOSS_STAGE_ID', null),
+        'webhook_lead_change_stage_url' => env('AMOCRM_WEBHOOK_LEAD_CHANGE_STAGE_URL', null),
     ],
 ];

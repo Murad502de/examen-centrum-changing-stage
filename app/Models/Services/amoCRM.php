@@ -38,6 +38,10 @@ class amoCRM extends Model
         self::truncate();
         self::create($accountData);
     }
+    public static function signout(): void
+    {
+        self::truncate();
+    }
     public static function getAuthData()
     {
         $authData = self::all()->first();

@@ -89,21 +89,15 @@ class amoAPIHub
         }
 
         for (;; $page++) {
-            //usleep( 500000 );
-
-            $url = 'https://' . $this->amoData['subdomain'] . '.amocrm.ru' . $api . '?limit=' . $this->pageItemLimit . '&page=' . $page;
-
-            $response = $this->client->sendRequest(
-
-                [
-                    'url'     => $url,
-                    'headers' => [
-                        'Content-Type'  => 'application/json',
-                        'Authorization' => 'Bearer ' . $this->amoData['access_token'],
-                    ],
-                    'method'  => 'GET',
-                ]
-            );
+            $url      = 'https://' . $this->amoData['subdomain'] . '.amocrm.ru' . $api . '?limit=' . $this->pageItemLimit . '&page=' . $page;
+            $response = $this->client->sendRequest([
+                'url'     => $url,
+                'headers' => [
+                    'Content-Type'  => 'application/json',
+                    'Authorization' => 'Bearer ' . $this->amoData['access_token'],
+                ],
+                'method'  => 'GET',
+            ]);
 
             if ($response['code'] < 200 || $response['code'] >= 204) {
                 break;
@@ -113,6 +107,72 @@ class amoAPIHub
         }
 
         return $entityList;
+    }
+
+    public function webhookList()
+    {
+        $url      = 'https://' . $this->amoData['subdomain'] . '.amocrm.ru/api/v4/webhooks?limit=' . $this->pageItemLimit;
+        $response = $this->client->sendRequest([
+            'url'     => $url,
+            'headers' => [
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer ' . $this->amoData['access_token'],
+            ],
+            'method'  => 'GET',
+        ]);
+
+        if ($response['code'] < 200 || $response['code'] >= 204) {
+            return null;
+        }
+
+        return $response['body'];
+    }
+
+    public function addWebhook(string $webhook)
+    {
+        $url      = 'https://' . $this->amoData['subdomain'] . '.amocrm.ru/api/v4/webhooks?limit=' . $this->pageItemLimit;
+        $response = $this->client->sendRequest([
+            'url'     => $url,
+            'headers' => [
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer ' . $this->amoData['access_token'],
+            ],
+            'method'  => 'POST',
+            'data'    => [
+                'destination' => $webhook,
+                'settings'    => [
+                    'status_lead',
+                ],
+            ],
+        ]);
+
+        if ($response['code'] < 200 || $response['code'] >= 204) {
+            return null;
+        }
+
+        return $response['body'];
+    }
+
+    public function deleteWebhook(string $webhook)
+    {
+        $url      = 'https://' . $this->amoData['subdomain'] . '.amocrm.ru/api/v4/webhooks?limit=' . $this->pageItemLimit;
+        $response = $this->client->sendRequest([
+            'url'     => $url,
+            'headers' => [
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer ' . $this->amoData['access_token'],
+            ],
+            'method'  => 'DELETE',
+            'data'    => [
+                'destination' => $webhook,
+            ],
+        ]);
+
+        if ($response['code'] < 200 || $response['code'] >= 204) {
+            return null;
+        }
+
+        return $response['body'];
     }
 
     public function listByQuery($entity, $query)

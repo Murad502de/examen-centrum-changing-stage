@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Services\AmoCrm;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Services\AmoCrm\AuthRequest;
 use App\Models\Services\amoCRM;
+use App\Repositories\AmoCRMRepository;
 use App\Services\amoAPI\amoAPIHub;
 
 class AmoCrmAuthController extends Controller
@@ -32,11 +33,15 @@ class AmoCrmAuthController extends Controller
         ];
 
         amoCRM::auth($accountData);
+        AmoCRMRepository::addWebhookAfterAuth();
 
         return response(['OK'], 200);
     }
     public function signout()
     {
+        AmoCRMRepository::deleteWebhookAfterSignout();
+        amoCRM::signout();
+
         return response(['OK'], 200);
     }
 }

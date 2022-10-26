@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use App\Models\Crons\LeadCron;
 
 class setDateInField implements ShouldQueue
 {
@@ -17,7 +18,7 @@ class setDateInField implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    private $leadId;
+    private $lead;
     private $fieldId;
 
     /**
@@ -25,9 +26,9 @@ class setDateInField implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(int $leadId, int $fieldId)
+    public function __construct(LeadCron $lead, int $fieldId)
     {
-        $this->leadId  = $leadId;
+        $this->lead  = $lead;
         $this->fieldId = $fieldId;
     }
 
@@ -38,8 +39,10 @@ class setDateInField implements ShouldQueue
      */
     public function handle()
     {
-        Log::info(__METHOD__, ['leadId: ' . $this->leadId]); //DELETE
+        Log::info(__METHOD__, ['lead: ' . $this->lead]); //DELETE
         Log::info(__METHOD__, ['fieldId: ' . $this->fieldId]); //DELETE
+
+        Log::info(__METHOD__, ["DEL::WEBHOOK : " . $this->lead->lead_id]); //DELETE
     }
 
     /**

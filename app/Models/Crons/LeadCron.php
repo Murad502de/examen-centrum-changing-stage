@@ -2,7 +2,9 @@
 
 namespace App\Models\Crons;
 
-use App\Jobs\setDateInField;
+use App\Models\Services\amoCRM;
+use App\Services\amoAPI\amoAPIHub;
+use App\Traits\Middleware\Services\AmoCRM\AmoTokenExpirationControlTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
@@ -12,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 class LeadCron extends Model
 {
     use HasFactory;
+    use AmoTokenExpirationControlTrait;
 
     protected $fillable = [
         'lead_id',
@@ -23,6 +26,7 @@ class LeadCron extends Model
     ];
 
     private const PARSE_COUNT = 20;
+    private static $amoAPIHub;
 
     public static function createLead(string $leadId, int $lastModified, array $data): void
     {
@@ -47,22 +51,47 @@ class LeadCron extends Model
     {
         Log::info(__METHOD__, ['Scheduler::[LeadCron][parseRecentWebhooks]']); //DELETE
 
-        $leads = self::orderBy('id', 'asc')
-            ->take(self::PARSE_COUNT)
-            ->get();
+        if (self::amoTokenExpirationControl()) {
+            self::$amoAPIHub = new amoAPIHub(amoCRM::getAuthData());
+            $leads           = self::getLeads();
 
-        foreach ($leads as $lead) {
-            Log::info(__METHOD__, ['webhook parsen ' . $lead->lead_id]); //DELETE
-            Log::info(__METHOD__, ['name von pipelines stufe bekommen ']); //DELETE
-            Log::info(__METHOD__, ['id von field durch die name der stufe bekommen ']); //DELETE
+            foreach ($leads as $lead) {
+                Log::info(__METHOD__, ['webhook parsen ' . $lead->data]); //DELETE
 
-            setDateInField::dispatch(12345, 67890);
+                $fieldId = self::getFieldIdByName(
+                    self::getStageNameById(
+                        (int) json_decode($lead->data)->status_id
+                    )
+                );
 
-            // $lead->delete();
+                if ($fieldId) {
+                    Log::info(__METHOD__, ['geben datum im feld-stufe ein']); //DELETE
+                }
+
+                // $lead->delete();
+            }
         }
     }
 
     /* PROCEDURES */
 
     /* FUNCTIONS */
+    public static function getLeads()
+    {
+        return self::orderBy('id', 'asc')
+            ->take(self::PARSE_COUNT)
+            ->get();
+    }
+    public static function getStageNameById(int $id): string
+    {
+        Log::info(__METHOD__, ['status_id: ' . $id]); //DELETE
+
+        return '';
+    }
+    public static function getFieldIdByName(string $name): ?int
+    {
+        Log::info(__METHOD__); //DELETE
+
+        return null;
+    }
 }
