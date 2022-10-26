@@ -15,7 +15,7 @@ trait AmoTokenExpirationControlTrait
 
         if ($authData) {
             if (time() >= (int) $authData['when_expires']) {
-                Log::info(__METHOD__, ['AmoCRM access token expired']); //DELETE
+                // Log::info(__METHOD__, ['AmoCRM access token expired']); //DELETE
 
                 $response = $client->accessTokenUpdate($authData);
 
@@ -33,21 +33,21 @@ trait AmoTokenExpirationControlTrait
 
                     amoCRM::auth($accountData);
 
-                    Log::info(__METHOD__, ['AmoCRM access token updated']); //DELETE
+                    // Log::info(__METHOD__, ['AmoCRM access token updated']); //DELETE
 
                     return true;
                 } else {
-                    Log::info(__METHOD__, ['AmoCRM auth error with code: ' . $response['code']]); //DELETE
+                    // Log::info(__METHOD__, ['AmoCRM auth error with code: ' . $response['code']]); //DELETE
 
                     return false;
                 }
             } else {
-                Log::info(__METHOD__, ['AmoCRM access token ist not expired']); //DELETE
+                // Log::info(__METHOD__, ['AmoCRM access token ist not expired']); //DELETE
 
                 return true;
             }
         } else {
-            Log::info(__METHOD__, ['AmoCRM auth credentials not found']); //DELETE
+            // Log::info(__METHOD__, ['AmoCRM auth credentials not found']); //DELETE
 
             return false;
         }

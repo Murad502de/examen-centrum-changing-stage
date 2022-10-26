@@ -7,7 +7,7 @@ use App\Services\amoAPI\amoAPIHub;
 use App\Traits\Middleware\Services\AmoCRM\AmoTokenExpirationControlTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
+// use Illuminate\Support\Facades\Log;
 
 // use App\Services\amoAPI\Entities\Lead as AmoLead;
 
@@ -49,7 +49,7 @@ class LeadCron extends Model
     }
     public static function parseRecentWebhooks()
     {
-        Log::info(__METHOD__, ['Scheduler::[LeadCron][parseRecentWebhooks]']); //DELETE
+        // Log::info(__METHOD__, ['Scheduler::[LeadCron][parseRecentWebhooks]']); //DELETE
 
         if (self::amoTokenExpirationControl()) {
             self::$amoAPIHub = new amoAPIHub(amoCRM::getAuthData());
@@ -64,7 +64,7 @@ class LeadCron extends Model
                 );
 
                 if ($fieldId) {
-                    Log::info(__METHOD__, ['geben datum im feld-stufe ein']); //DELETE
+                    // Log::info(__METHOD__, ['geben datum im feld-stufe ein']); //DELETE
 
                     self::$amoAPIHub->updateLead([
                         [
@@ -133,9 +133,9 @@ class LeadCron extends Model
             if ($field['name'] === $str) {
                 $fieldId = (int) $field['id'];
 
-                Log::info(__METHOD__, ['id: ' . $fieldId]); //DELETE
-                Log::info(__METHOD__, ['name: ' . $field['name']]); //DELETE
-                Log::info(__METHOD__, ['str: ' . $str]); //DELETE
+                // Log::info(__METHOD__, ['id: ' . $fieldId]); //DELETE
+                // Log::info(__METHOD__, ['name: ' . $field['name']]); //DELETE
+                // Log::info(__METHOD__, ['str: ' . $str]); //DELETE
             }
         }
 
