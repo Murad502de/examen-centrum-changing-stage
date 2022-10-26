@@ -13,7 +13,7 @@ class AmoCRMRepository
 
     private static $amoAPIHub;
 
-    public static function addWebhookAfterAuth(string $webhookUrl)
+    public static function addWebhookAfterAuth(string $webhookUrl, array $settings)
     {
         Log::info(__METHOD__); //DELETE
 
@@ -31,7 +31,7 @@ class AmoCRMRepository
                 if (!$webhook) {
                     Log::info(__METHOD__, ['Must add']); //DELETE
 
-                    self::$amoAPIHub->addWebhook($webhookUrl);
+                    self::$amoAPIHub->addWebhook($webhookUrl, $settings);
                 }
             }
         }

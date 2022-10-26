@@ -132,7 +132,7 @@ class amoAPIHub
         return $response['body'];
     }
 
-    public function addWebhook(string $webhook)
+    public function addWebhook(string $webhook, array $settings)
     {
         $url      = 'https://' . $this->amoData['subdomain'] . '.amocrm.ru/api/v4/webhooks?limit=' . $this->pageItemLimit;
         $response = $this->client->sendRequest([
@@ -144,9 +144,7 @@ class amoAPIHub
             'method'  => 'POST',
             'data'    => [
                 'destination' => $webhook,
-                'settings'    => [
-                    'status_lead',
-                ],
+                'settings'    => $settings,
             ],
         ]);
 
