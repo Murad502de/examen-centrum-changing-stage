@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\Webhooks\LeadWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
-    Route::prefix('webhook')->middleware('auth.amocrm')->group(function () {
+    Route::prefix('webhook')->group(function () {
         Route::prefix('leads')->group(function () {
             Route::post('create', [LeadWebhookController::class, 'create']);
             Route::post('update', [LeadWebhookController::class, 'update']);
