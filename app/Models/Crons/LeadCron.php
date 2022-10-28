@@ -130,7 +130,10 @@ class LeadCron extends Model
         }
 
         foreach ($fields as $field) {
-            if ($field['name'] === $str) {
+            if (
+                $field['type'] === 'date_time' &&
+                $field['name'] === $str
+            ) {
                 $fieldId = (int) $field['id'];
 
                 // Log::info(__METHOD__, ['id: ' . $fieldId]); //DELETE
