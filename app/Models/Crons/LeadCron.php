@@ -124,6 +124,7 @@ class LeadCron extends Model
             foreach ($customFields as $customField) {
                 $fields[] = [
                     'id'   => $customField['id'],
+                    'type'   => $customField['type'],
                     'name' => str_replace(' ', '', trim(mb_strtolower($customField['name']))),
                 ];
             }
